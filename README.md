@@ -68,9 +68,21 @@ Run `make clean` in `src` directory to clean current build.
 
 # Flashing
 ## With nrfjprog
-How to program nRF5x SoCs with nrfjprog you can find [Nordic Infocenter](https://infocenter.nordicsemi.com/index.jsp?topic=%2Fug_nrf5x_cltools%2FUG%2Fcltools%2Fnrf5x_nrfjprogexe.html).To get started:
+How to program nRF5x SoCs with nrfjprog you can find [Nordic Infocenter](https://infocenter.nordicsemi.com/index.jsp?topic=%2Fug_nrf5x_cltools%2FUG%2Fcltools%2Fnrf5x_nrfjprogexe.html).
 ```
-nrfjprog --eraseall
-nrfjprog --program ruuvigw_nrf_armgcc_ruuvigw_release_vX.X.X_full.hex
-nrfjprog --reset
+#!/bin/sh
+if [  $# = 0  ] ;then echo Usage $0 xxxx.hex; exit; fi
+nrfjprog='/Applications/Nordic Semiconductor/nrfjprog/nrfjprog'
+
+partNum=`"$nrfjprog" --memrd 0x10000100 --w 32 --n 4  | cut -c16-20`    # quotes mitigate space in directoryname
+if [ $partNum -ne 52811 ] ; then echo "--  RuuviGateway uses nRF52811. I see nRF$partNum ! Check T-connect cable." ; exit 1 ; fi
+
+#$nrfjprog --eraseall # do not eraseall
+"$nrfjprog" --program $1  --sectorerase --verify --fast 
+
+##/Applications/SEGGER/JLink/JLinkExe  -Device NRF52811_XXAA -Autoconnect 1 -if SWD -Speed 4000 
+## nrfjprog --pinreset
+
+echo  "  MAC (low 2 bytes):"
+"$nrfjprog"  --memrd 0x100000A4  --w 16 --n 2  |cut -f2  -d:
 ```
