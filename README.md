@@ -67,7 +67,7 @@ Run `make` in `src` directory to build all the sources.
 Run `make clean` in `src` directory to clean current build.
 
 # Flashing
-## With nrfjprog
+## With nrfjprog and Segger J-Link
 How to program nRF5x SoCs with nrfjprog you can find [Nordic Command Line Tools](https://www.nordicsemi.com/Software-and-Tools/Development-Tools/nRF-Command-Line-Tools).
 ```
 #!/bin/sh
